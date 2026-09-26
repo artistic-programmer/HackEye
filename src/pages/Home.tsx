@@ -17,9 +17,6 @@ import {
   BarChart3, 
   CheckSquare, 
   XCircle, 
-  Radio, 
-  Sparkles,
-  ExternalLink 
 } from 'lucide-react';
 
 export const Home: React.FC = () => {
@@ -86,97 +83,74 @@ export const Home: React.FC = () => {
         {/* Subtle background web & constellation overlay */}
         <div className="absolute inset-0 bg-cyber-grid opacity-30 pointer-events-none"></div>
 
-        {/* 1. HERO SECTION */}
-        <section className="relative pt-12 pb-20 lg:pt-20 lg:pb-28 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-            
-            {/* Left Content */}
-            <div className="lg:col-span-6 z-10">
-              {/* Red Accent Dash */}
-              <div className="w-9 h-1 bg-[#E31E24] mb-6 rounded-full"></div>
+        {/* 1. HERO SECTION matching Home_Page.png */}
+        <section 
+          className="relative pt-12 pb-20 lg:pt-24 lg:pb-32 bg-[url('/assets/backgrounds/home_hero_bg.png')] bg-cover bg-[position:80%_center] lg:bg-center overflow-hidden border-b border-gray-200/50"
+        >
+          {/* Subtle gradient overlay to guarantee extreme text readability on smaller screens */}
+          <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-transparent lg:via-white/40 pointer-events-none"></div>
 
-              {/* Main Headline */}
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-gray-950 font-['Outfit'] uppercase leading-[1.06] tracking-tight">
-                EVERY REPORT<br />
-                HAS A STORY.<br />
-                WE FIND<br />
-                THE <span className="text-[#E31E24]">SIGNAL.</span>
-              </h1>
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+              
+              {/* Left Content */}
+              <div className="lg:col-span-6 z-10 max-w-xl">
+                {/* Red Accent Dash */}
+                <div className="w-9 h-1 bg-[#E31E24] mb-6 rounded-full"></div>
 
-              {/* Tagline */}
-              <p className="mt-6 text-base sm:text-lg text-gray-600 font-medium max-w-lg">
-                AI-assisted incident reporting with human verification.
-              </p>
+                {/* Main Headline */}
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-gray-950 font-['Outfit'] uppercase leading-[1.06] tracking-tight">
+                  EVERY REPORT<br />
+                  HAS A STORY.<br />
+                  WE FIND<br />
+                  THE <span className="text-[#E31E24]">SIGNAL.</span>
+                </h1>
 
-              {/* Call to Action Buttons */}
-              <div className="mt-8 flex flex-wrap items-center gap-4">
-                <button
-                  onClick={handleReportCTA}
-                  className="inline-flex items-center justify-center gap-2 bg-[#E31E24] hover:bg-[#c9181d] text-white px-7 py-3.5 rounded-lg font-bold text-xs sm:text-sm tracking-wider uppercase transition-all shadow-md hover:shadow-lg active:scale-95 group"
-                >
-                  <span>REPORT AN INCIDENT</span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </button>
+                {/* Tagline */}
+                <p className="mt-6 text-base sm:text-lg text-gray-700 font-medium max-w-lg leading-relaxed">
+                  AI-assisted incident reporting with human verification.
+                </p>
 
-                <Link
-                  to="/reports"
-                  className="inline-flex items-center justify-center gap-2 bg-transparent hover:bg-gray-100 text-gray-800 border border-gray-300 hover:border-gray-400 px-6 py-3.5 rounded-lg font-bold text-xs sm:text-sm tracking-wider uppercase transition-all active:scale-95 group"
-                >
-                  <span>EXPLORE REPORTS</span>
-                  <ArrowRight className="w-4 h-4 text-gray-400 group-hover:translate-x-1 group-hover:text-gray-900 transition-all" />
-                </Link>
-              </div>
+                {/* Call to Action Buttons */}
+                <div className="mt-8 flex flex-wrap items-center gap-4">
+                  <button
+                    onClick={handleReportCTA}
+                    className="inline-flex items-center justify-center gap-2 bg-[#E31E24] hover:bg-[#c9181d] text-white px-7 py-3.5 rounded-lg font-bold text-xs sm:text-sm tracking-wider uppercase transition-all shadow-md hover:shadow-lg active:scale-95 group cursor-pointer"
+                  >
+                    <span>REPORT AN INCIDENT</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </button>
 
-              {/* Bottom Micro-tagline */}
-              <div className="mt-12 flex items-center gap-3 text-[11px] sm:text-xs font-bold text-gray-400 uppercase tracking-widest">
-                <span className="w-4 h-0.5 bg-gray-300"></span>
-                <span>REAL PEOPLE</span>
-                <span className="text-gray-300">|</span>
-                <span>REAL PLACES</span>
-                <span className="text-gray-300">|</span>
-                <span>A SAFER TOMORROW</span>
-              </div>
-            </div>
-
-            {/* Right Graphic / Sentinel with Floating Holographic Badges */}
-            <div className="lg:col-span-6 relative flex items-center justify-center">
-              <div className="relative w-full max-w-lg lg:max-w-none">
-                
-                {/* Holographic Sentinel Artwork */}
-                <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-white/80 bg-gradient-to-tr from-gray-900/10 via-transparent to-red-500/10">
-                  <img
-                    src="/assets/extracted/hero_sentinel.png"
-                    alt="Daily Bugle Sentinel overlooking city"
-                    className="w-full h-auto object-cover rounded-2xl transform hover:scale-102 transition-transform duration-500"
-                  />
-
-                  {/* Floating Hologram 1: Top Right */}
-                  <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3.5 py-2 rounded-xl border border-white shadow-lg flex items-center gap-2 animate-bounce-slow">
-                    <span className="w-2 h-2 rounded-full bg-[#E31E24] animate-ping"></span>
-                    <div className="text-[10px] leading-tight font-bold text-gray-800">
-                      <div>Real People</div>
-                      <div className="text-[#E31E24]">Real Reports Real Change</div>
-                    </div>
-                  </div>
-
-                  {/* Floating Hologram 2: Mid-Left */}
-                  <div className="absolute bottom-16 left-4 bg-white/90 backdrop-blur-md px-3.5 py-2 rounded-xl border border-white shadow-lg flex items-center gap-2">
-                    <BarChart3 className="w-4 h-4 text-[#E31E24]" />
-                    <span className="text-xs font-bold text-gray-800">Safer Communities</span>
-                  </div>
+                  <Link
+                    to="/reports"
+                    className="inline-flex items-center justify-center gap-2 bg-white/90 hover:bg-white text-gray-800 border border-gray-300 hover:border-gray-400 px-6 py-3.5 rounded-lg font-bold text-xs sm:text-sm tracking-wider uppercase transition-all active:scale-95 group shadow-xs cursor-pointer"
+                  >
+                    <span>EXPLORE REPORTS</span>
+                    <ArrowRight className="w-4 h-4 text-gray-400 group-hover:translate-x-1 group-hover:text-gray-900 transition-all" />
+                  </Link>
                 </div>
 
-                {/* Subtle outer glow */}
-                <div className="absolute -inset-4 bg-gradient-to-r from-red-500/10 to-blue-500/10 rounded-3xl blur-2xl -z-10"></div>
+                {/* Bottom Micro-tagline */}
+                <div className="mt-12 flex items-center gap-3 text-[11px] sm:text-xs font-bold text-gray-500 uppercase tracking-widest">
+                  <span className="w-4 h-0.5 bg-[#E31E24]"></span>
+                  <span>REAL PEOPLE</span>
+                  <span className="text-gray-400">|</span>
+                  <span>REAL PLACES</span>
+                  <span className="text-gray-400">|</span>
+                  <span>A SAFER TOMORROW</span>
+                </div>
               </div>
-            </div>
 
+              {/* Right column allows the Sentinel from the background to remain fully visible */}
+              <div className="hidden lg:block lg:col-span-6 min-h-[380px]"></div>
+
+            </div>
           </div>
         </section>
 
 
         {/* 2. LIVE REPORTS SECTION */}
-        <section className="py-16 bg-white/60 border-t border-b border-gray-100/90 relative">
+        <section className="py-16 bg-white/70 border-b border-gray-200/60 relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
             {/* Section Header */}
@@ -203,7 +177,7 @@ export const Home: React.FC = () => {
                 <div
                   key={report.id}
                   onClick={() => setSelectedReport(report)}
-                  className="group bg-white rounded-2xl p-4 border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-xl hover:border-gray-200 transition-all cursor-pointer flex flex-col justify-between"
+                  className="group bg-white rounded-2xl p-4 border border-gray-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-xl hover:border-gray-300 transition-all cursor-pointer flex flex-col justify-between"
                 >
                   <div>
                     <div className="flex items-start gap-4 mb-3">
@@ -327,7 +301,7 @@ export const Home: React.FC = () => {
 
 
         {/* 4. AI ASSISTS. HUMANS VERIFY. SECTION */}
-        <section id="about" className="py-20 bg-white/70 border-t border-b border-gray-100 relative scroll-mt-24">
+        <section id="about" className="py-20 bg-white/80 border-t border-b border-gray-200/60 relative scroll-mt-24">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
             {/* Header */}
@@ -338,7 +312,7 @@ export const Home: React.FC = () => {
                   AI ASSISTS. HUMANS VERIFY.
                 </h2>
               </div>
-              <p className="text-sm text-gray-500 max-w-xl">
+              <p className="text-sm text-gray-600 max-w-xl">
                 A combination of technology and real-world judgement for a safer, more informed society.
               </p>
             </div>
@@ -347,7 +321,7 @@ export const Home: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
               
               {/* Left Card: AI Assistance */}
-              <div className="bg-white rounded-2xl p-6 sm:p-8 border border-gray-100 shadow-md hover:shadow-lg transition-all">
+              <div className="bg-white rounded-2xl p-6 sm:p-8 border border-gray-200 shadow-md hover:shadow-lg transition-all">
                 <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-4">
                   <Cpu className="w-6 h-6" />
                 </div>
@@ -388,7 +362,7 @@ export const Home: React.FC = () => {
               </div>
 
               {/* Right Card: Human Review */}
-              <div className="bg-white rounded-2xl p-6 sm:p-8 border border-gray-100 shadow-md hover:shadow-lg transition-all">
+              <div className="bg-white rounded-2xl p-6 sm:p-8 border border-gray-200 shadow-md hover:shadow-lg transition-all">
                 <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-4">
                   <Users className="w-6 h-6" />
                 </div>
@@ -418,117 +392,125 @@ export const Home: React.FC = () => {
 
 
         {/* 5. BUILT ON TRUST SECTION */}
-        <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-2 mb-10">
-            <span className="w-6 h-0.5 bg-[#E31E24]"></span>
-            <h2 className="text-xl sm:text-2xl font-black text-gray-950 font-['Outfit'] uppercase tracking-tight">
-              BUILT ON TRUST
-            </h2>
-          </div>
+        {/* 5 & 6. BUILT ON TRUST & BOTTOM PIER CTA SECTION matching Home_Page.png */}
+        <section 
+          className="relative pt-16 pb-28 sm:pb-36 bg-[url('/assets/backgrounds/home_bottom_bg.png')] bg-cover bg-bottom border-t border-gray-200/50 overflow-hidden"
+        >
+          {/* Subtle light gradient to ensure crisp contrast */}
+          <div className="absolute inset-0 bg-gradient-to-b from-white/80 via-transparent to-transparent pointer-events-none"></div>
 
-          {/* Reputation Stats Card */}
-          <div className="bg-white rounded-2xl p-6 sm:p-8 border border-gray-100 shadow-md hover:shadow-xl transition-all">
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
-              
-              {/* Left: 64 REPUTATION */}
-              <div className="md:col-span-4 flex items-center gap-4">
-                <span className="text-5xl sm:text-6xl font-black text-gray-950 font-['Outfit'] tracking-tight">
-                  64
-                </span>
-                <div>
-                  <BarChart3 className="w-6 h-6 text-[#E31E24] mb-1" />
-                  <span className="text-xs font-black text-gray-400 uppercase tracking-widest font-['Outfit']">
-                    REPUTATION
-                  </span>
-                </div>
-              </div>
-
-              {/* Middle: Reports Breakdowns */}
-              <div className="md:col-span-4 md:border-l md:border-r border-gray-100 md:px-8 space-y-2.5">
-                <div className="flex items-center gap-3 text-xs sm:text-sm font-bold text-gray-700">
-                  <FileText className="w-4 h-4 text-gray-400" />
-                  <span>8 REPORTS</span>
-                </div>
-                <div className="flex items-center gap-3 text-xs sm:text-sm font-bold text-gray-700">
-                  <CheckSquare className="w-4 h-4 text-emerald-600" />
-                  <span>6 VERIFIED</span>
-                </div>
-                <div className="flex items-center gap-3 text-xs sm:text-sm font-bold text-gray-700">
-                  <XCircle className="w-4 h-4 text-red-500" />
-                  <span>1 REJECTED</span>
-                </div>
-              </div>
-
-              {/* Right: Trusted Reporter */}
-              <div className="md:col-span-4 flex items-center gap-4">
-                <div className="w-14 h-14 rounded-full bg-blue-100/70 border-2 border-white shadow-sm flex items-center justify-center shrink-0">
-                  <Users className="w-7 h-7 text-blue-600" />
-                </div>
-                <div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-sm font-black text-gray-950 uppercase tracking-wide font-['Outfit']">
-                      TRUSTED REPORTER
-                    </span>
-                    <ShieldCheck className="w-4 h-4 text-[#E31E24]" />
-                  </div>
-                  {/* Subtle placeholder indicator bars */}
-                  <div className="mt-2 space-y-1">
-                    <div className="w-28 h-1.5 bg-gray-200 rounded-full"></div>
-                    <div className="w-16 h-1.5 bg-gray-100 rounded-full"></div>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </section>
-
-
-        {/* 6. BOTTOM BANNER / BRIDGE VIEW */}
-        <section className="relative py-24 bg-gradient-to-b from-gray-900 via-gray-950 to-black text-white overflow-hidden">
-          {/* Subtle bridge background texture */}
-          <div className="absolute inset-0 opacity-20 bg-cover bg-center" style={{ backgroundImage: "url('/assets/extracted/form_bg.png')" }}></div>
-          <div className="absolute inset-0 bg-radial-gradient from-transparent via-black/40 to-black pointer-events-none"></div>
-
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              
-              {/* Left Watermark */}
-              <div className="hidden lg:block lg:col-span-3 text-[11px] font-mono uppercase tracking-[0.25em] text-gray-500 leading-loose">
-                REAL REPORTS<br />
-                SAFER CITIES<br />
-                STRONGER PEOPLE
-              </div>
-
-              {/* Center Content */}
-              <div className="lg:col-span-6 text-center">
-                <div className="w-8 h-1 bg-[#E31E24] mx-auto mb-6 rounded-full"></div>
-                
-                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black font-['Outfit'] uppercase leading-tight tracking-tight">
-                  YOUR REPORT<br />
-                  COULD BE THE <span className="text-[#E31E24]">SIGNAL</span><br />
-                  SOMEONE NEEDS.
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
+            
+            {/* Section 5: BUILT ON TRUST */}
+            <div className="mb-20">
+              <div className="flex items-center gap-2 mb-8">
+                <span className="w-6 h-0.5 bg-[#E31E24]"></span>
+                <h2 className="text-xl sm:text-2xl font-black text-gray-950 font-['Outfit'] uppercase tracking-tight">
+                  BUILT ON TRUST
                 </h2>
+              </div>
 
-                <div className="mt-8">
-                  <button
-                    onClick={handleReportCTA}
-                    className="inline-flex items-center gap-2 bg-[#E31E24] hover:bg-[#c9181d] text-white px-8 py-4 rounded-lg font-bold text-xs sm:text-sm tracking-wider uppercase transition-all shadow-xl hover:shadow-red-500/20 active:scale-95 group"
-                  >
-                    <span>REPORT AN INCIDENT</span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </button>
+              {/* Reputation Stats Card */}
+              <div className="bg-white/95 backdrop-blur-md rounded-2xl p-6 sm:p-8 border border-gray-100 shadow-[0_4px_25px_rgba(0,0,0,0.06)] hover:shadow-xl transition-all">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+                  
+                  {/* Left: 64 REPUTATION */}
+                  <div className="md:col-span-4 flex items-center gap-4">
+                    <span className="text-5xl sm:text-6xl font-black text-gray-950 font-['Outfit'] tracking-tight">
+                      64
+                    </span>
+                    <div>
+                      <BarChart3 className="w-6 h-6 text-[#E31E24] mb-1" />
+                      <span className="text-xs font-black text-gray-500 uppercase tracking-widest font-['Outfit']">
+                        REPUTATION
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Middle: Reports Breakdowns */}
+                  <div className="md:col-span-4 md:border-l md:border-r border-gray-100 md:px-8 space-y-2.5">
+                    <div className="flex items-center gap-3 text-xs sm:text-sm font-bold text-gray-800">
+                      <FileText className="w-4 h-4 text-gray-400" />
+                      <span>8 REPORTS</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-xs sm:text-sm font-bold text-gray-800">
+                      <CheckSquare className="w-4 h-4 text-emerald-600" />
+                      <span>6 VERIFIED</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-xs sm:text-sm font-bold text-gray-800">
+                      <XCircle className="w-4 h-4 text-red-500" />
+                      <span>1 REJECTED</span>
+                    </div>
+                  </div>
+
+                  {/* Right: Trusted Reporter */}
+                  <div className="md:col-span-4 flex items-center gap-4">
+                    <div className="w-14 h-14 rounded-full bg-blue-100/70 border-2 border-white shadow-sm flex items-center justify-center shrink-0">
+                      <Users className="w-7 h-7 text-blue-600" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-sm font-black text-gray-950 uppercase tracking-wide font-['Outfit']">
+                          TRUSTED REPORTER
+                        </span>
+                        <ShieldCheck className="w-4 h-4 text-[#E31E24]" />
+                      </div>
+                      {/* Subtle placeholder indicator bars */}
+                      <div className="mt-2 space-y-1">
+                        <div className="w-28 h-1.5 bg-gray-200 rounded-full"></div>
+                        <div className="w-16 h-1.5 bg-gray-100 rounded-full"></div>
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
               </div>
-
-              {/* Right Watermark */}
-              <div className="hidden lg:block lg:col-span-3 text-right text-[11px] font-mono uppercase tracking-[0.25em] text-gray-500 leading-loose">
-                A MORE<br />
-                INFORMED<br />
-                TOMORROW
-              </div>
-
             </div>
+
+            {/* Section 6: YOUR REPORT COULD BE THE SIGNAL SOMEONE NEEDS */}
+            <div className="pt-6 pb-12">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                
+                {/* Left Watermark */}
+                <div className="hidden lg:block lg:col-span-3 text-[11px] font-mono font-bold uppercase tracking-[0.25em] text-gray-600 leading-loose">
+                  REAL REPORTS<br />
+                  SAFER CITIES<br />
+                  STRONGER PEOPLE
+                  <div className="w-5 h-0.5 bg-[#E31E24] mt-2"></div>
+                </div>
+
+                {/* Center Content */}
+                <div className="lg:col-span-6 text-center">
+                  <div className="w-8 h-1 bg-[#E31E24] mx-auto mb-6 rounded-full"></div>
+                  
+                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black font-['Outfit'] uppercase leading-tight tracking-tight text-gray-950">
+                    YOUR REPORT<br />
+                    COULD BE THE <span className="text-[#E31E24]">SIGNAL</span><br />
+                    SOMEONE NEEDS.
+                  </h2>
+
+                  <div className="mt-8">
+                    <button
+                      onClick={handleReportCTA}
+                      className="inline-flex items-center gap-2 bg-[#E31E24] hover:bg-[#c9181d] text-white px-8 py-4 rounded-xl font-bold text-xs sm:text-sm tracking-wider uppercase transition-all shadow-xl hover:shadow-red-500/25 active:scale-95 group cursor-pointer"
+                    >
+                      <span>REPORT AN INCIDENT</span>
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Right Watermark */}
+                <div className="hidden lg:block lg:col-span-3 text-right text-[11px] font-mono font-bold uppercase tracking-[0.25em] text-gray-600 leading-loose">
+                  A MORE<br />
+                  INFORMED<br />
+                  TOMORROW
+                  <div className="w-5 h-0.5 bg-[#E31E24] mt-2 ml-auto"></div>
+                </div>
+
+              </div>
+            </div>
+
           </div>
         </section>
 

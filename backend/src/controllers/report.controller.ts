@@ -68,7 +68,7 @@ export const createReport = async (req: Request, res: Response): Promise<void> =
       return;
     }
 
-    const devUser = await getOrCreateDevUser();
+    const reporterUser = (req as any).user || (await getOrCreateDevUser());
 
     const newReport = await Report.create({
       title: title.trim(),
@@ -80,7 +80,7 @@ export const createReport = async (req: Request, res: Response): Promise<void> =
         longitude: typeof location.longitude === 'number' ? location.longitude : 0,
       },
       evidence: typeof evidence === 'string' ? evidence : '',
-      reporter: devUser._id,
+      reporter: reporterUser._id,
       status: 'UNDER_REVIEW', // Initial status required for all new reports
     });
 
@@ -131,11 +131,11 @@ export const getReports = async (req: Request, res: Response): Promise<void> => 
 };
 
 // GET /api/reports/my - Return reports by the current user (temporary dev user)
-export const getMyReports = async (_req: Request, res: Response): Promise<void> => {
+export const getMyReports = async (req: Request, res: Response): Promise<void> => {
   try {
-    const devUser = await getOrCreateDevUser();
+    const reporterUser = (req as any).user || (await getOrCreateDevUser());
 
-    const reports = await Report.find({ reporter: devUser._id })
+    const reports = await Report.find({ reporter: reporterUser._id })
       .sort({ createdAt: -1 })
       .populate('reporter', 'name avatar role reputation');
 

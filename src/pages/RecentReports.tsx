@@ -46,7 +46,7 @@ export const RecentReports: React.FC = () => {
   const [selectedReport, setSelectedReport] = useState<ReportItem | null>(null);
   const [showFullMapModal, setShowFullMapModal] = useState(false);
 
-  // Fetch live reports from backend
+  // Fetch live reports from backend (MongoDB Atlas)
   useEffect(() => {
     const fetchBackendReports = async () => {
       try {
@@ -152,16 +152,16 @@ export const RecentReports: React.FC = () => {
   };
 
   return (
-    <PageLayout>
+    <PageLayout 
+      transparentHeader
+      className="bg-[url('/assets/backgrounds/city_pier_bg.png')] bg-top bg-cover bg-no-repeat min-h-screen"
+    >
       <div className="relative py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
         
-        {/* Subtle grid background */}
-        <div className="absolute inset-0 bg-cyber-grid opacity-25 pointer-events-none -z-10"></div>
-
         {/* Top Header Banner matching recent_reports.png */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 pb-6 border-b border-gray-200/80 gap-6">
           <div>
-            <div className="text-[11px] font-mono font-bold tracking-widest text-gray-400 uppercase mb-2">
+            <div className="text-[11px] font-mono font-bold tracking-widest text-gray-500 uppercase mb-2">
               CIVIC REPORTS. STRONGER CITIES.
             </div>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-gray-950 font-['Outfit'] uppercase tracking-tight">
@@ -172,7 +172,7 @@ export const RecentReports: React.FC = () => {
             </p>
 
             {/* Live Stats Pill Bar */}
-            <div className="mt-4 inline-flex flex-wrap items-center gap-2 sm:gap-4 px-3.5 py-1.5 rounded-full bg-white border border-gray-200 text-xs shadow-xs">
+            <div className="mt-4 inline-flex flex-wrap items-center gap-2 sm:gap-4 px-3.5 py-1.5 rounded-full bg-white/90 border border-gray-200/90 text-xs shadow-xs backdrop-blur-sm">
               <span className="flex items-center gap-1.5 font-bold text-emerald-700">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                 LIVE REPORTS
@@ -182,7 +182,7 @@ export const RecentReports: React.FC = () => {
                 <strong className="text-gray-900">{reports.length + 115}</strong> reports submitted recently
               </span>
               <span className="text-gray-300">|</span>
-              <span className="text-gray-400 flex items-center gap-1">
+              <span className="text-gray-500 flex items-center gap-1">
                 <Clock className="w-3 h-3 text-gray-400" />
                 Last updated moments ago
               </span>
@@ -208,7 +208,7 @@ export const RecentReports: React.FC = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search reports, locations, or incidents..."
-              className="w-full pl-12 pr-4 py-3.5 rounded-2xl border border-gray-200 bg-white text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#E31E24] focus:ring-1 focus:ring-[#E31E24] shadow-xs transition-all"
+              className="w-full pl-12 pr-4 py-3.5 rounded-2xl border border-gray-200/90 bg-white/95 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#E31E24] focus:ring-1 focus:ring-[#E31E24] shadow-xs transition-all backdrop-blur-xs"
             />
           </div>
 
@@ -217,7 +217,7 @@ export const RecentReports: React.FC = () => {
             
             {/* Category Pills */}
             <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-gray-400 mr-1 hidden sm:inline">
+              <span className="text-xs font-bold uppercase tracking-wider text-gray-500 mr-1 hidden sm:inline">
                 CATEGORY:
               </span>
               {CATEGORIES.map((cat) => {
@@ -226,10 +226,10 @@ export const RecentReports: React.FC = () => {
                   <button
                     key={cat}
                     onClick={() => setSelectedCategory(cat)}
-                    className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                    className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                       isActive
                         ? 'bg-[#E31E24] text-white shadow-xs'
-                        : 'bg-white hover:bg-gray-100 text-gray-700 border border-gray-200'
+                        : 'bg-white/90 hover:bg-white text-gray-700 border border-gray-200/90 shadow-2xs'
                     }`}
                   >
                     {cat}
@@ -245,7 +245,7 @@ export const RecentReports: React.FC = () => {
                 <select
                   value={selectedStatus}
                   onChange={(e) => setSelectedStatus(e.target.value)}
-                  className="appearance-none bg-white border border-gray-200 rounded-lg pl-3 pr-8 py-1.5 text-xs font-bold text-gray-700 focus:outline-none focus:border-gray-900 cursor-pointer shadow-xs"
+                  className="appearance-none bg-white/90 border border-gray-200/90 rounded-lg pl-3 pr-8 py-1.5 text-xs font-bold text-gray-700 focus:outline-none focus:border-gray-900 cursor-pointer shadow-2xs"
                 >
                   <option value="All">All Status</option>
                   <option value="VERIFIED">Verified</option>
@@ -260,7 +260,7 @@ export const RecentReports: React.FC = () => {
                 <select
                   value={selectedLocation}
                   onChange={(e) => setSelectedLocation(e.target.value)}
-                  className="appearance-none bg-white border border-gray-200 rounded-lg pl-3 pr-8 py-1.5 text-xs font-bold text-gray-700 focus:outline-none focus:border-gray-900 cursor-pointer shadow-xs"
+                  className="appearance-none bg-white/90 border border-gray-200/90 rounded-lg pl-3 pr-8 py-1.5 text-xs font-bold text-gray-700 focus:outline-none focus:border-gray-900 cursor-pointer shadow-2xs"
                 >
                   <option value="All">📍 All Locations</option>
                   <option value="KIIT">KIIT Square</option>
@@ -280,7 +280,7 @@ export const RecentReports: React.FC = () => {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as any)}
-                  className="appearance-none bg-white border border-gray-200 rounded-lg pl-3 pr-8 py-1.5 text-xs font-bold text-gray-700 focus:outline-none focus:border-gray-900 cursor-pointer shadow-xs"
+                  className="appearance-none bg-white/90 border border-gray-200/90 rounded-lg pl-3 pr-8 py-1.5 text-xs font-bold text-gray-700 focus:outline-none focus:border-gray-900 cursor-pointer shadow-2xs"
                 >
                   <option value="recent">⇅ Most Recent</option>
                   <option value="corroborated">👥 Most Corroborated</option>
@@ -296,7 +296,7 @@ export const RecentReports: React.FC = () => {
         {/* Featured Report Card matching recent_reports.png */}
         {featuredReport && (
           <div className="mb-8">
-            <div className="bg-white rounded-3xl p-5 sm:p-6 border border-gray-200 shadow-sm hover:shadow-md transition-all">
+            <div className="bg-white/95 rounded-3xl p-5 sm:p-6 border border-gray-200/90 shadow-xs hover:shadow-md transition-all backdrop-blur-xs">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
                 
                 {/* Left Photo with FEATURED REPORT tag */}
@@ -349,7 +349,7 @@ export const RecentReports: React.FC = () => {
 
                     <button
                       onClick={() => setSelectedReport(featuredReport)}
-                      className="inline-flex items-center gap-1.5 bg-[#E31E24] hover:bg-[#c9181d] text-white px-5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider shadow-sm hover:shadow transition-all"
+                      className="inline-flex items-center gap-1.5 bg-[#E31E24] hover:bg-[#c9181d] text-white px-5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider shadow-sm hover:shadow transition-all cursor-pointer"
                     >
                       <span>VIEW REPORT</span>
                       <ArrowRight className="w-3.5 h-3.5" />
@@ -364,7 +364,7 @@ export const RecentReports: React.FC = () => {
 
         {/* Empty State */}
         {filteredReports.length === 0 && (
-          <div className="bg-white rounded-3xl p-12 text-center border border-gray-200 my-8">
+          <div className="bg-white/95 rounded-3xl p-12 text-center border border-gray-200/90 my-8 shadow-xs">
             <div className="w-12 h-12 rounded-full bg-red-50 text-[#E31E24] flex items-center justify-center mx-auto mb-4">
               <Search className="w-6 h-6" />
             </div>
@@ -379,7 +379,7 @@ export const RecentReports: React.FC = () => {
                 setSelectedStatus('All');
                 setSelectedLocation('All');
               }}
-              className="mt-4 px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-bold uppercase tracking-wider"
+              className="mt-4 px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-bold uppercase tracking-wider cursor-pointer"
             >
               Reset Filters
             </button>
@@ -393,7 +393,7 @@ export const RecentReports: React.FC = () => {
               <div
                 key={report.id}
                 onClick={() => setSelectedReport(report)}
-                className="bg-white rounded-2xl p-3.5 border border-gray-200 shadow-xs hover:shadow-lg hover:border-gray-300 transition-all cursor-pointer flex flex-col justify-between group"
+                className="bg-white/95 rounded-2xl p-3.5 border border-gray-200/90 shadow-2xs hover:shadow-lg hover:border-gray-300 transition-all cursor-pointer flex flex-col justify-between group backdrop-blur-2xs"
               >
                 <div>
                   {/* Card Header & Thumbnail */}
@@ -444,7 +444,7 @@ export const RecentReports: React.FC = () => {
         )}
 
         {/* REPORTS NEAR YOU Section matching recent_reports.png */}
-        <section className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200 shadow-sm relative overflow-hidden">
+        <section className="bg-white/95 rounded-3xl p-6 sm:p-8 border border-gray-200/90 shadow-sm relative overflow-hidden backdrop-blur-xs">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
             <div>
               <div className="flex items-center gap-2 mb-1">
@@ -460,7 +460,7 @@ export const RecentReports: React.FC = () => {
 
             <button
               onClick={() => setShowFullMapModal(true)}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-gray-300 hover:border-gray-900 bg-white hover:bg-gray-50 text-xs font-bold uppercase tracking-wider text-gray-800 transition-all shadow-xs"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-gray-300 hover:border-gray-900 bg-white hover:bg-gray-50 text-xs font-bold uppercase tracking-wider text-gray-800 transition-all shadow-xs cursor-pointer"
             >
               <MapIcon className="w-3.5 h-3.5 text-[#E31E24]" />
               <span>OPEN FULL MAP</span>
@@ -509,7 +509,7 @@ export const RecentReports: React.FC = () => {
               </div>
               <button
                 onClick={() => setShowFullMapModal(false)}
-                className="p-1 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-200"
+                className="p-1 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-200 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -548,7 +548,7 @@ export const RecentReports: React.FC = () => {
             <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end">
               <button
                 onClick={() => setShowFullMapModal(false)}
-                className="px-5 py-2 rounded-xl bg-gray-900 text-white text-xs font-bold uppercase tracking-wider"
+                className="px-5 py-2 rounded-xl bg-gray-900 text-white text-xs font-bold uppercase tracking-wider cursor-pointer"
               >
                 Close Map View
               </button>

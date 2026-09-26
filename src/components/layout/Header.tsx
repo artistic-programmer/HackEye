@@ -15,7 +15,11 @@ import {
   User as UserIcon 
 } from 'lucide-react';
 
-export const Header: React.FC = () => {
+interface HeaderProps {
+  transparent?: boolean;
+}
+
+export const Header: React.FC<HeaderProps> = ({ transparent = false }) => {
   const { user, isAuthenticated, logout } = useAuth();
   const { isOnline, isSimulatedOffline, toggleSimulateOffline } = useOnlineStatus();
   const location = useLocation();
@@ -70,36 +74,12 @@ export const Header: React.FC = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-[0_1px_3px_rgba(0,0,0,0.03)] transition-all">
-      {/* Dev banner for offline simulation */}
-      <div className="bg-gray-900 text-gray-300 text-xs py-1 px-4 flex items-center justify-between border-b border-gray-800">
-        <div className="flex items-center gap-2">
-          <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span className="font-mono text-[11px] text-gray-400">DAILY BUGLE CIVIC VERIFICATION NETWORK v2.4</span>
-        </div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={toggleSimulateOffline}
-            className={`flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-medium transition-colors ${
-              isSimulatedOffline 
-                ? 'bg-red-500/20 text-red-400 border border-red-500/40 hover:bg-red-500/30' 
-                : 'bg-gray-800 text-gray-300 hover:text-white hover:bg-gray-700'
-            }`}
-            title="Click to toggle offline mode simulation for testing"
-          >
-            {isSimulatedOffline ? <WifiOff className="w-3 h-3 text-red-400" /> : <Wifi className="w-3 h-3 text-emerald-400" />}
-            {isSimulatedOffline ? 'Simulating Offline (Click to Restore)' : 'Online (Simulate Offline)'}
-          </button>
-          {!isOnline && (
-            <Link
-              to="/offline"
-              className="text-red-400 underline font-semibold text-[11px] hover:text-red-300"
-            >
-              View Offline Page
-            </Link>
-          )}
-        </div>
-      </div>
+    <>
+      <header className={`sticky top-0 z-40 transition-all ${
+        transparent 
+          ? 'bg-white/60 backdrop-blur-md border-b border-gray-200/40' 
+          : 'bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-[0_1px_3px_rgba(0,0,0,0.02)]'
+      }`}>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
@@ -144,14 +124,14 @@ export const Header: React.FC = () => {
 
             <button
               onClick={() => handleNavClick('how-it-works')}
-              className="relative px-4 py-2 text-xs lg:text-sm font-bold tracking-wide uppercase text-gray-600 hover:text-gray-950 transition-colors"
+              className="relative px-4 py-2 text-xs lg:text-sm font-bold tracking-wide uppercase text-gray-600 hover:text-gray-950 transition-colors cursor-pointer"
             >
               How It Works
             </button>
 
             <button
               onClick={() => handleNavClick('about')}
-              className="relative px-4 py-2 text-xs lg:text-sm font-bold tracking-wide uppercase text-gray-600 hover:text-gray-950 transition-colors"
+              className="relative px-4 py-2 text-xs lg:text-sm font-bold tracking-wide uppercase text-gray-600 hover:text-gray-950 transition-colors cursor-pointer"
             >
               About
             </button>
@@ -163,7 +143,7 @@ export const Header: React.FC = () => {
             {location.pathname === '/reports' && (
               <button
                 onClick={handleReportCTA}
-                className="flex items-center gap-1.5 bg-[#E31E24] hover:bg-[#c9181d] text-white text-xs font-bold uppercase tracking-wider px-4 py-2 rounded-lg shadow-sm hover:shadow transition-all"
+                className="flex items-center gap-1.5 bg-[#E31E24] hover:bg-[#c9181d] text-white text-xs font-bold uppercase tracking-wider px-4 py-2 rounded-lg shadow-sm hover:shadow transition-all cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 <span>Report an Incident</span>
@@ -174,12 +154,12 @@ export const Header: React.FC = () => {
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                  className="flex items-center gap-2 py-1.5 px-3 rounded-full hover:bg-gray-100/80 transition-all border border-transparent hover:border-gray-200"
+                  className="flex items-center gap-2 py-1.5 px-3 rounded-full hover:bg-gray-100/80 transition-all border border-transparent hover:border-gray-200 cursor-pointer"
                   aria-expanded={userDropdownOpen}
                 >
                   <div className="w-8 h-8 rounded-full bg-gray-200 border-2 border-white shadow-sm overflow-hidden flex items-center justify-center text-gray-700 font-bold text-xs">
-                    {user.avatarUrl ? (
-                      <img src={user.avatarUrl} alt={user.name} className="w-full h-full object-cover" />
+                    {(user.avatarUrl || user.avatar) ? (
+                      <img src={user.avatarUrl || user.avatar} alt={user.name} className="w-full h-full object-cover" />
                     ) : (
                       <UserIcon className="w-4 h-4 text-gray-500" />
                     )}
@@ -237,7 +217,7 @@ export const Header: React.FC = () => {
                     <div className="border-t border-gray-100 pt-1">
                       <button
                         onClick={logout}
-                        className="w-full flex items-center gap-2 px-4 py-2 text-xs font-medium text-red-600 hover:bg-red-50 transition-colors"
+                        className="w-full flex items-center gap-2 px-4 py-2 text-xs font-medium text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
                       >
                         <LogOut className="w-4 h-4" />
                         Sign Out
@@ -260,7 +240,7 @@ export const Header: React.FC = () => {
           <div className="md:hidden flex items-center gap-2">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+              className="p-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer"
               aria-label="Toggle menu"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -315,8 +295,8 @@ export const Header: React.FC = () => {
               <div className="pt-2">
                 <div className="flex items-center gap-3 px-2 py-2">
                   <div className="w-9 h-9 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center font-bold text-xs">
-                    {user.avatarUrl ? (
-                      <img src={user.avatarUrl} alt={user.name} className="w-full h-full object-cover" />
+                    {(user.avatarUrl || user.avatar) ? (
+                      <img src={user.avatarUrl || user.avatar} alt={user.name} className="w-full h-full object-cover" />
                     ) : (
                       user.name[0]
                     )}
@@ -346,5 +326,22 @@ export const Header: React.FC = () => {
         </div>
       )}
     </header>
+
+      {/* Floating subtle dev offline simulation toggle at bottom-right */}
+      <aside aria-label="Developer utilities" className="fixed bottom-3 right-3 z-50 flex items-center gap-2">
+        <button
+          onClick={toggleSimulateOffline}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold shadow-lg backdrop-blur-md transition-all border cursor-pointer ${
+            isSimulatedOffline 
+              ? 'bg-red-600 text-white border-red-700 animate-pulse' 
+              : 'bg-gray-900/85 hover:bg-gray-900 text-gray-200 border-gray-700/60'
+          }`}
+          title="Toggle Simulated Offline State"
+        >
+          {isSimulatedOffline ? <WifiOff className="w-3.5 h-3.5 text-white" /> : <Wifi className="w-3.5 h-3.5 text-emerald-400" />}
+          <span>{isSimulatedOffline ? 'Simulating Offline' : 'Network Online'}</span>
+        </button>
+      </aside>
+    </>
   );
 };

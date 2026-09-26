@@ -41,23 +41,18 @@ export const Offline: React.FC = () => {
   };
 
   return (
-    <PageLayout minimalFooter>
-      <div className="relative py-12 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full flex-1 flex flex-col items-center justify-center text-center">
+    <PageLayout 
+      minimalFooter 
+      transparentHeader
+      className="bg-[url('/assets/backgrounds/signal_offline_bg.jpg')] bg-top bg-cover bg-no-repeat min-h-screen"
+    >
+      <div className="relative py-8 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full flex-1 flex flex-col items-center justify-center text-center">
         
-        {/* Subtle grid background */}
-        <div className="absolute inset-0 bg-cyber-grid opacity-20 pointer-events-none -z-10"></div>
-
-        {/* 3D Holographic Diagram matching Signaloffline.png */}
-        <div className="w-full max-w-2xl mb-8 rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition-shadow">
-          <img
-            src="/assets/extracted/offline_diagram.png"
-            alt="Signal Connection Severed"
-            className="w-full h-auto object-contain"
-          />
-        </div>
+        {/* Spatial spacer allowing the 3D Holographic Disconnection Orbs from the background to show cleanly */}
+        <div className="w-full h-56 sm:h-64 md:h-72 lg:h-80 pointer-events-none"></div>
 
         {/* Pill Badge */}
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gray-100 border border-gray-200 text-gray-600 text-xs font-bold uppercase tracking-wider mb-4">
+        <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-gray-100/90 border border-gray-200 text-gray-700 text-xs font-bold uppercase tracking-wider mb-4 shadow-xs">
           <span className="w-2 h-2 rounded-full bg-gray-400"></span>
           CONNECTION OFFLINE
         </div>

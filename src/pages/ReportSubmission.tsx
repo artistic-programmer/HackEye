@@ -166,6 +166,7 @@ export const ReportSubmission: React.FC = () => {
         const res = await fetch('http://localhost:5000/api/reports', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
           body: JSON.stringify({
             title: description.slice(0, 60) + (description.length > 60 ? '...' : ''),
             description,
@@ -229,11 +230,11 @@ export const ReportSubmission: React.FC = () => {
   };
 
   return (
-    <PageLayout>
+    <PageLayout 
+      transparentHeader
+      className="bg-[url('/assets/backgrounds/city_pier_bg.png')] bg-top bg-cover bg-no-repeat min-h-screen"
+    >
       <div className="relative py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-        
-        {/* Cityscape bridge watermark atmosphere */}
-        <div className="absolute inset-0 bg-cyber-grid opacity-20 pointer-events-none -z-10"></div>
 
         {/* Page Title */}
         <div className="text-center max-w-2xl mx-auto mb-10">

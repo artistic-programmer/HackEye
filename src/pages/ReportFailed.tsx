@@ -16,8 +16,6 @@ import {
   ChevronUp, 
   ArrowLeft, 
   ShieldCheck, 
-  AlertTriangle,
-  Server,
   Terminal
 } from 'lucide-react';
 
@@ -69,29 +67,24 @@ export const ReportFailed: React.FC = () => {
   };
 
   return (
-    <PageLayout minimalFooter>
-      <div className="relative py-12 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full flex-1 flex flex-col items-center justify-center text-center">
+    <PageLayout 
+      minimalFooter 
+      transparentHeader
+      className="bg-[url('/assets/backgrounds/report_failed_bg.png')] bg-top bg-cover bg-no-repeat min-h-screen"
+    >
+      <div className="relative py-8 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full flex-1 flex flex-col items-center justify-center text-center">
         
-        {/* Subtle grid background */}
-        <div className="absolute inset-0 bg-cyber-grid opacity-20 pointer-events-none -z-10"></div>
-
         {/* Top Tracker */}
         <div className="w-8 h-1 bg-[#E31E24] mb-3 rounded-full"></div>
-        <div className="text-[11px] font-mono font-bold tracking-widest text-gray-400 uppercase mb-6">
+        <div className="text-[11px] font-mono font-bold tracking-widest text-gray-500 uppercase mb-4">
           REPORT SUBMISSION
         </div>
 
-        {/* 3D Holographic Failure Diagram matching Report not sent.png */}
-        <div className="w-full max-w-xl mb-8 rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition-shadow">
-          <img
-            src="/assets/extracted/failed_diagram.png"
-            alt="Report Submission Interrupted"
-            className="w-full h-auto object-contain"
-          />
-        </div>
+        {/* Spatial spacer allowing the 3D Holographic Failure Diagram from the background to show cleanly */}
+        <div className="w-full h-52 sm:h-64 md:h-72 lg:h-80 pointer-events-none"></div>
 
         {/* Status Pill Badge */}
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 border border-red-200 text-[#E31E24] text-xs font-bold uppercase tracking-wider mb-4">
+        <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-red-100/90 border border-red-200 text-[#E31E24] text-xs font-bold uppercase tracking-wider mb-3">
           <span className="w-2 h-2 rounded-full bg-[#E31E24] animate-ping"></span>
           SUBMISSION FAILED
         </div>
@@ -124,7 +117,7 @@ export const ReportFailed: React.FC = () => {
           <button
             onClick={handleTryAgain}
             disabled={isRetrying}
-            className="flex-1 min-w-[160px] inline-flex items-center justify-center gap-2 bg-[#E31E24] hover:bg-[#c9181d] text-white px-6 py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-md active:scale-95 disabled:opacity-50"
+            className="flex-1 min-w-[160px] inline-flex items-center justify-center gap-2 bg-[#E31E24] hover:bg-[#c9181d] text-white px-6 py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-md active:scale-95 disabled:opacity-50 cursor-pointer"
           >
             <RotateCw className={`w-4 h-4 ${isRetrying ? 'animate-spin' : ''}`} />
             <span>{isRetrying ? 'Retrying Transmission...' : 'TRY AGAIN'}</span>
@@ -132,7 +125,7 @@ export const ReportFailed: React.FC = () => {
 
           <button
             onClick={handleEditReport}
-            className="flex-1 min-w-[160px] inline-flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-800 border border-gray-300 px-6 py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-xs active:scale-95"
+            className="flex-1 min-w-[160px] inline-flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-800 border border-gray-300 px-6 py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-xs active:scale-95 cursor-pointer"
           >
             <FileEdit className="w-4 h-4 text-gray-600" />
             <span>EDIT REPORT</span>
@@ -144,7 +137,7 @@ export const ReportFailed: React.FC = () => {
           <button
             type="button"
             onClick={() => setTechDetailsOpen(!techDetailsOpen)}
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-500 hover:text-gray-900 transition-colors uppercase tracking-wider"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-500 hover:text-gray-900 transition-colors uppercase tracking-wider cursor-pointer"
           >
             <span>Technical details</span>
             {techDetailsOpen ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}

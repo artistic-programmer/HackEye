@@ -1,7 +1,9 @@
 import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import reportRoutes from './routes/report.routes';
+import authRoutes from './routes/auth.routes';
 import { notFoundHandler, errorHandler } from './middleware/error.middleware';
 
 // Load environment variables
@@ -18,7 +20,8 @@ app.use(
   })
 );
 
-// Enable JSON parsing
+// Enable Cookie and JSON parsing
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -29,6 +32,9 @@ app.get('/api/health', (_req: Request, res: Response) => {
     message: 'Daily Bugle backend is running',
   });
 });
+
+// Authentication APIs
+app.use('/api/auth', authRoutes);
 
 // Report APIs
 app.use('/api/reports', reportRoutes);

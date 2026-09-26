@@ -49,9 +49,11 @@ export interface UserProfile {
   name: string;
   email: string;
   avatarUrl?: string;
+  avatar?: string;
+  role?: string;
   reputation: number;
-  reportsCount: number;
-  verifiedCount: number;
-  rejectedCount: number;
-  isTrustedReporter: boolean;
+  reportsCount?: number;
+  verifiedCount?: number;
+  rejectedCount?: number;
+  isTrustedReporter?: boolean;
 }

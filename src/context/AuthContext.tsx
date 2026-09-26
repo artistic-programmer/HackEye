@@ -1,30 +1,26 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { UserProfile } from '../types/report';
-import { INITIAL_USER } from '../data/mockReports';
+import { authService } from '../services/auth.service';
 
 interface AuthContextType {
   user: UserProfile | null;
+  loading: boolean;
   isAuthenticated: boolean;
-  login: () => void;
-  logout: () => void;
+  loginWithCredential: (credential: string) => Promise<UserProfile>;
+  logout: () => Promise<void>;
+  refreshUser: () => Promise<void>;
   intendedDestination: string | null;
   setIntendedDestination: (path: string | null) => void;
+  login: () => void; // Legacy fallback
 }
 
-const STORAGE_KEY_AUTH = 'dailybugle_auth_user';
 const STORAGE_KEY_INTENDED = 'dailybugle_intended_dest';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<UserProfile | null>(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY_AUTH);
-      return stored ? JSON.parse(stored) : null;
-    } catch {
-      return null;
-    }
-  });
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const [intendedDestination, setIntendedState] = useState<string | null>(() => {
     try {
@@ -33,6 +29,34 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       return null;
     }
   });
+
+  // Verify session on application mount
+  useEffect(() => {
+    let isMounted = true;
+
+    const verifySession = async () => {
+      try {
+        const currentUser = await authService.getMe();
+        if (isMounted) {
+          setUser(currentUser);
+        }
+      } catch (err) {
+        if (isMounted) {
+          setUser(null);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    verifySession();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const setIntendedDestination = (path: string | null) => {
     setIntendedState(path);
@@ -43,25 +67,53 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  const login = () => {
-    setUser(INITIAL_USER);
-    localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(INITIAL_USER));
+  const loginWithCredential = async (credential: string): Promise<UserProfile> => {
+    setLoading(true);
+    try {
+      const authenticatedUser = await authService.loginWithGoogle(credential);
+      setUser(authenticatedUser);
+      return authenticatedUser;
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem(STORAGE_KEY_AUTH);
+  const logout = async (): Promise<void> => {
+    setLoading(true);
+    try {
+      await authService.logout();
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const refreshUser = async (): Promise<void> => {
+    try {
+      const currentUser = await authService.getMe();
+      setUser(currentUser);
+    } catch {
+      setUser(null);
+    }
+  };
+
+  // Legacy fallback if called without credential
+  const login = () => {
+    refreshUser();
   };
 
   return (
     <AuthContext.Provider
       value={{
         user,
+        loading,
         isAuthenticated: !!user,
-        login,
+        loginWithCredential,
         logout,
+        refreshUser,
         intendedDestination,
         setIntendedDestination,
+        login,
       }}
     >
       {children}
