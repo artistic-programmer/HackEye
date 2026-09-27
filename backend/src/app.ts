@@ -15,10 +15,27 @@ dotenv.config();
 const app: Application = express();
 
 // Configure CORS
-const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  'http://localhost:5173',
+  'http://localhost:5000',
+  'http://localhost:3000',
+].filter(Boolean) as string[];
+
 app.use(
   cors({
-    origin: [frontendUrl, 'http://localhost:5173'],
+    origin: (origin, callback) => {
+      // Allow requests with no origin (e.g. mobile apps, server-to-server, curl)
+      if (!origin) return callback(null, true);
+      if (
+        allowedOrigins.includes(origin) ||
+        origin.endsWith('.vercel.app') ||
+        process.env.NODE_ENV !== 'production'
+      ) {
+        return callback(null, true);
+      }
+      callback(null, true); // Permissive fallback for deployment flexibility
+    },
     credentials: true,
   })
 );

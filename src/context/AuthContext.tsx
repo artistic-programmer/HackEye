@@ -7,6 +7,7 @@ interface AuthContextType {
   loading: boolean;
   isAuthenticated: boolean;
   loginWithCredential: (credential: string) => Promise<UserProfile>;
+  loginWithAccessToken: (accessToken: string) => Promise<UserProfile>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
   intendedDestination: string | null;
@@ -78,6 +79,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  const loginWithAccessToken = async (accessToken: string): Promise<UserProfile> => {
+    setLoading(true);
+    try {
+      const authenticatedUser = await authService.loginWithGoogle({ accessToken });
+      setUser(authenticatedUser);
+      return authenticatedUser;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const logout = async (): Promise<void> => {
     setLoading(true);
     try {
@@ -109,6 +121,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         loading,
         isAuthenticated: !!user,
         loginWithCredential,
+        loginWithAccessToken,
         logout,
         refreshUser,
         intendedDestination,

@@ -23,15 +23,19 @@ const formatSafeUser = (user: any) => ({
 });
 
 /**
- * Helper to get cookie options for localhost / production
+ * Helper to get cookie options for localhost / production / cross-site
  */
-const getCookieOptions = () => ({
-  httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: 'lax' as const,
-  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-  path: '/',
-});
+const getCookieOptions = (req?: Request) => {
+  const isHttps = req ? (req.secure || req.headers['x-forwarded-proto'] === 'https') : false;
+  const isProd = process.env.NODE_ENV === 'production' || isHttps;
+  return {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: isProd ? ('none' as const) : ('lax' as const),
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    path: '/',
+  };
+};
 
 /**
  * POST /api/auth/google
@@ -43,12 +47,12 @@ export const googleLogin = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { credential } = req.body;
+    const { credential, accessToken } = req.body;
 
-    if (!credential || typeof credential !== 'string') {
+    if (!credential && !accessToken) {
       res.status(400).json({
         success: false,
-        message: 'Google credential is required and must be a valid token string.',
+        message: 'Google credential (ID token) or accessToken is required.',
       });
       return;
     }
@@ -73,34 +77,73 @@ export const googleLogin = async (
       return;
     }
 
-    // 1. Verify Google ID token strictly with Google's official library
-    const googleClient = getGoogleClient();
-    let ticket;
-    try {
-      ticket = await googleClient.verifyIdToken({
-        idToken: credential,
-        audience: googleClientId,
-      });
-    } catch (verifyError: any) {
-      console.error('Google ID token verification failed:', verifyError.message);
-      res.status(401).json({
+    let googleId: string;
+    let email: string;
+    let email_verified: boolean | undefined;
+    let name: string | undefined;
+    let picture: string | undefined;
+
+    // 1. Verify Google token (ID token or OAuth2 access token)
+    if (credential && typeof credential === 'string') {
+      const googleClient = getGoogleClient();
+      let ticket;
+      try {
+        ticket = await googleClient.verifyIdToken({
+          idToken: credential,
+          audience: googleClientId,
+        });
+      } catch (verifyError: any) {
+        console.error('Google ID token verification failed:', verifyError.message);
+        res.status(401).json({
+          success: false,
+          message: 'Invalid Google authentication token. Verification failed.',
+        });
+        return;
+      }
+
+      const payload = ticket.getPayload();
+      if (!payload) {
+        res.status(401).json({
+          success: false,
+          message: 'Invalid token payload received from Google.',
+        });
+        return;
+      }
+
+      googleId = payload.sub;
+      email = payload.email || '';
+      email_verified = payload.email_verified;
+      name = payload.name;
+      picture = payload.picture;
+    } else if (accessToken && typeof accessToken === 'string') {
+      try {
+        const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        if (!userInfoRes.ok) {
+          throw new Error('Google userinfo verification failed with status ' + userInfoRes.status);
+        }
+        const profile: any = await userInfoRes.json();
+        googleId = profile.sub;
+        email = profile.email || '';
+        email_verified = profile.email_verified;
+        name = profile.name;
+        picture = profile.picture;
+      } catch (err: any) {
+        console.error('Google access token verification failed:', err.message);
+        res.status(401).json({
+          success: false,
+          message: 'Invalid Google access token. Verification failed.',
+        });
+        return;
+      }
+    } else {
+      res.status(400).json({
         success: false,
-        message: 'Invalid Google authentication token. Verification failed.',
+        message: 'Invalid authentication payload format.',
       });
       return;
     }
-
-    const payload = ticket.getPayload();
-    if (!payload) {
-      res.status(401).json({
-        success: false,
-        message: 'Invalid token payload received from Google.',
-      });
-      return;
-    }
-
-    // 2. Extract verified claims
-    const { sub: googleId, email, email_verified, name, picture } = payload;
 
     if (!googleId) {
       res.status(401).json({
@@ -174,13 +217,14 @@ export const googleLogin = async (
     );
 
     // 5. Store JWT in HttpOnly cookie
-    res.cookie(AUTH_COOKIE_NAME, sessionToken, getCookieOptions());
+    res.cookie(AUTH_COOKIE_NAME, sessionToken, getCookieOptions(req));
 
-    // 6. Return safe public user info
+    // 6. Return safe public user info and token fallback
     res.status(200).json({
       success: true,
       data: {
         user: formatSafeUser(user),
+        token: sessionToken,
       },
     });
   } catch (error) {
@@ -222,12 +266,12 @@ export const getMe = async (
  * Clears the HttpOnly JWT session cookie.
  */
 export const logout = async (
-  _req: Request,
+  req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
-    const cookieOptions = getCookieOptions();
+    const cookieOptions = getCookieOptions(req);
     res.clearCookie(AUTH_COOKIE_NAME, {
       httpOnly: cookieOptions.httpOnly,
       secure: cookieOptions.secure,

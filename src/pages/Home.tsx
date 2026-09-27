@@ -300,93 +300,109 @@ export const Home: React.FC = () => {
         </section>
 
 
-        {/* 4. AI ASSISTS. HUMANS VERIFY. SECTION */}
-        <section id="about" className="py-20 bg-white/80 border-t border-b border-gray-200/60 relative scroll-mt-24">
+        {/* 4. AI ASSISTS. HUMANS VERIFY. SECTION matching Home_Page.png */}
+        <section id="about" className="py-20 bg-[#FBFDFF] border-t border-b border-gray-100 relative scroll-mt-24 overflow-hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            
-            {/* Header */}
-            <div className="mb-12">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="w-6 h-0.5 bg-[#E31E24]"></span>
-                <h2 className="text-xl sm:text-2xl font-black text-gray-950 font-['Outfit'] uppercase tracking-tight">
-                  AI ASSISTS. HUMANS VERIFY.
-                </h2>
-              </div>
-              <p className="text-sm text-gray-600 max-w-xl">
-                A combination of technology and real-world judgement for a safer, more informed society.
-              </p>
-            </div>
-
-            {/* 3-column AI / Sphere / Human layout */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
               
-              {/* Left Card: AI Assistance */}
-              <div className="bg-white rounded-2xl p-6 sm:p-8 border border-gray-200 shadow-md hover:shadow-lg transition-all">
-                <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-4">
-                  <Cpu className="w-6 h-6" />
+              {/* Left Column: Editorial Headline & Subtitle matching Home_Page.png */}
+              <div className="lg:col-span-5 max-w-lg">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="w-8 h-1 bg-[#E31E24] rounded-full"></span>
                 </div>
-                <h3 className="text-base font-black text-gray-900 font-['Outfit'] uppercase tracking-wide mb-4">
-                  AI ASSISTANCE
-                </h3>
-                <ul className="space-y-3 text-xs sm:text-sm text-gray-600 font-medium">
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-blue-600 shrink-0" />
-                    <span>Organizes information</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-blue-600 shrink-0" />
-                    <span>Finds signals</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-blue-600 shrink-0" />
-                    <span>Highlights gaps</span>
-                  </li>
-                </ul>
+                <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-black text-gray-950 font-['Outfit'] uppercase tracking-tight leading-[1.12] mb-4">
+                  AI ASSISTS.<br />
+                  <span className="text-gray-950">HUMANS VERIFY.</span>
+                </h2>
+                <p className="text-sm sm:text-base text-gray-600 font-medium leading-relaxed max-w-sm">
+                  A combination of technology and real-world judgement for a safer, more informed society.
+                </p>
               </div>
 
-              {/* Center Holographic Sphere */}
-              <div className="flex flex-col items-center justify-center relative py-6">
-                <div className="relative w-44 h-44 flex items-center justify-center">
-                  <img
-                    src="/assets/extracted/ai_sphere.png"
-                    alt="AI Holographic Core"
-                    className="w-full h-full object-contain filter drop-shadow-[0_0_20px_rgba(59,130,246,0.35)] animate-pulse"
-                  />
-                  {/* Orbital pulse ring */}
-                  <div className="absolute inset-0 rounded-full border border-blue-400/30 animate-spin" style={{ animationDuration: '12s' }}></div>
-                  <div className="absolute -inset-3 rounded-full border border-dashed border-red-400/20 animate-spin" style={{ animationDuration: '18s', animationDirection: 'reverse' }}></div>
-                </div>
-                <span className="text-[11px] font-mono font-bold text-gray-400 tracking-wider uppercase mt-4">
-                  Spatio-Temporal Verification Core
-                </span>
-              </div>
+              {/* Right Column: Unified Verification Flow Widget matching Home_Page.png */}
+              <div className="lg:col-span-7">
+                <div className="relative rounded-3xl bg-gradient-to-r from-[#F0F5FA]/90 via-[#F6F9FD]/95 to-[#F0F5FA]/90 border border-blue-100/80 p-4 sm:p-7 shadow-[0_10px_35px_rgba(20,50,95,0.05)] overflow-hidden">
+                  
+                  {/* Subtle ambient cyan/blue radial glow */}
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-blue-400/10 rounded-full blur-3xl pointer-events-none" />
 
-              {/* Right Card: Human Review */}
-              <div className="bg-white rounded-2xl p-6 sm:p-8 border border-gray-200 shadow-md hover:shadow-lg transition-all">
-                <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-4">
-                  <Users className="w-6 h-6" />
+                  {/* Connecting circuit lines behind cards */}
+                  <svg className="absolute inset-0 w-full h-full pointer-events-none hidden md:block" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="25%" y1="50%" x2="50%" y2="50%" stroke="#93C5FD" strokeWidth="1.5" strokeDasharray="3 3" opacity="0.6" />
+                    <line x1="50%" y1="50%" x2="75%" y2="50%" stroke="#93C5FD" strokeWidth="1.5" strokeDasharray="3 3" opacity="0.6" />
+                  </svg>
+
+                  {/* Inner Content Grid */}
+                  <div className="relative flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6 z-10">
+                    
+                    {/* Left Sub-Card: AI ASSISTANCE */}
+                    <div className="w-full md:flex-1 bg-white rounded-2xl p-5 sm:p-6 border border-gray-100/90 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+                      <div className="w-10 h-10 rounded-xl bg-blue-50/80 border border-blue-100 text-blue-600 flex items-center justify-center mb-3.5 shadow-xs">
+                        <Cpu className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <h3 className="text-xs sm:text-sm font-black text-gray-950 font-['Outfit'] uppercase tracking-wider mb-3.5">
+                        AI ASSISTANCE
+                      </h3>
+                      <ul className="space-y-2.5 text-xs sm:text-[13px] text-gray-600 font-medium">
+                        <li className="flex items-center gap-2">
+                          <Check className="w-4 h-4 text-blue-600 shrink-0" strokeWidth={2.5} />
+                          <span>Organizes information</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="w-4 h-4 text-blue-600 shrink-0" strokeWidth={2.5} />
+                          <span>Finds signals</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="w-4 h-4 text-blue-600 shrink-0" strokeWidth={2.5} />
+                          <span>Highlights gaps</span>
+                        </li>
+                      </ul>
+                    </div>
+
+                    {/* Center Holographic Verification Core */}
+                    <div className="relative flex flex-col items-center justify-center shrink-0 w-32 sm:w-40 py-2">
+                      <div className="relative w-28 h-28 sm:w-36 sm:h-36 flex items-center justify-center">
+                        <img
+                          src="/assets/extracted/ai_sphere.png"
+                          alt="AI Verification Core"
+                          className="w-full h-full object-contain filter drop-shadow-[0_0_15px_rgba(59,130,246,0.35)] select-none pointer-events-none"
+                        />
+                        {/* Orbital animated rings */}
+                        <div className="absolute inset-0 rounded-full border border-blue-400/30 animate-spin" style={{ animationDuration: '14s' }} />
+                        <div className="absolute -inset-2 rounded-full border border-dashed border-red-400/20 animate-spin" style={{ animationDuration: '22s', animationDirection: 'reverse' }} />
+                      </div>
+                    </div>
+
+                    {/* Right Sub-Card: HUMAN REVIEW */}
+                    <div className="w-full md:flex-1 bg-white rounded-2xl p-5 sm:p-6 border border-gray-100/90 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+                      <div className="w-10 h-10 rounded-xl bg-blue-50/80 border border-blue-100 text-blue-600 flex items-center justify-center mb-3.5 shadow-xs">
+                        <Users className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <h3 className="text-sm font-black text-gray-950 font-['Outfit'] uppercase tracking-wider mb-3.5">
+                        HUMAN REVIEW
+                      </h3>
+                      <ul className="space-y-2.5 text-xs sm:text-[13px] text-gray-600 font-medium">
+                        <li className="flex items-center gap-2">
+                          <Check className="w-4 h-4 text-blue-600 shrink-0" strokeWidth={2.5} />
+                          <span>Reviews evidence</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="w-4 h-4 text-blue-600 shrink-0" strokeWidth={2.5} />
+                          <span>Investigates</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="w-4 h-4 text-blue-600 shrink-0" strokeWidth={2.5} />
+                          <span>Makes final decision</span>
+                        </li>
+                      </ul>
+                    </div>
+
+                  </div>
+
                 </div>
-                <h3 className="text-base font-black text-gray-900 font-['Outfit'] uppercase tracking-wide mb-4">
-                  HUMAN REVIEW
-                </h3>
-                <ul className="space-y-3 text-xs sm:text-sm text-gray-600 font-medium">
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-blue-600 shrink-0" />
-                    <span>Reviews evidence</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-blue-600 shrink-0" />
-                    <span>Investigates</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-blue-600 shrink-0" />
-                    <span>Makes final decision</span>
-                  </li>
-                </ul>
               </div>
 
             </div>
-
           </div>
         </section>
 
