@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { ArrowRight, Sparkles, X, AlertCircle } from 'lucide-react';
+import { ArrowRight, AlertCircle } from 'lucide-react';
 
 export const Login: React.FC = () => {
   const { loginWithCredential, isAuthenticated, intendedDestination, setIntendedDestination } = useAuth();
@@ -10,7 +10,6 @@ export const Login: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [showSignUpModal, setShowSignUpModal] = useState(false);
   const googleBtnContainerRef = useRef<HTMLDivElement>(null);
 
   // Destination resolution
@@ -230,18 +229,6 @@ export const Login: React.FC = () => {
                   <div className="flex-1">{errorMessage}</div>
                 </div>
               )}
-
-              <div className="mt-6 text-xs text-gray-500 font-medium pl-2">
-                Don't have an account?{' '}
-                <button
-                  type="button"
-                  onClick={() => setShowSignUpModal(true)}
-                  className="text-[#E31E24] hover:underline font-bold inline-flex items-center gap-1 group cursor-pointer"
-                >
-                  Sign up
-                  <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                </button>
-              </div>
             </div>
           </div>
 
@@ -250,51 +237,6 @@ export const Login: React.FC = () => {
 
         </div>
       </div>
-
-      {/* Sign Up Info Modal */}
-      {showSignUpModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-950/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-gray-100 relative">
-            <button
-              onClick={() => setShowSignUpModal(false)}
-              className="absolute top-4 right-4 p-1 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 cursor-pointer"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <div className="w-10 h-10 rounded-xl bg-red-50 text-[#E31E24] flex items-center justify-center mb-4">
-              <Sparkles className="w-5 h-5" />
-            </div>
-
-            <h2 className="text-xl font-black text-gray-950 font-['Outfit'] uppercase">
-              JOIN THE <span className="text-[#E31E24]">DAILY BUGLE</span>
-            </h2>
-            <p className="mt-2 text-xs sm:text-sm text-gray-600 font-medium leading-relaxed">
-              We use secure, one-click Google Sign-In to verify citizen journalists. No extra passwords to remember.
-            </p>
-
-            <div className="mt-6 flex justify-end gap-3">
-              <button
-                type="button"
-                onClick={() => setShowSignUpModal(false)}
-                className="px-4 py-2.5 rounded-xl border border-gray-200 text-xs font-bold text-gray-700 hover:bg-gray-50 uppercase tracking-wider cursor-pointer"
-              >
-                Close
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setShowSignUpModal(false);
-                  handleManualGoogleClick();
-                }}
-                className="px-5 py-2.5 rounded-xl bg-[#E31E24] hover:bg-[#c9181d] text-white text-xs font-bold uppercase tracking-wider transition-all shadow-sm cursor-pointer"
-              >
-                Continue with Google
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

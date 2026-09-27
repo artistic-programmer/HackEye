@@ -1,6 +1,7 @@
 import React from 'react';
 import { ReportItem } from '../../types/report';
 import { StatusBadge } from '../ui/StatusBadge';
+import { reportService } from '../../services/report.service';
 import { 
   X, 
   MapPin, 
@@ -11,7 +12,10 @@ import {
   CheckCircle2, 
   AlertTriangle,
   ThumbsUp,
-  Share2
+  Share2,
+  Calendar,
+  Layers,
+  ArrowRight
 } from 'lucide-react';
 
 interface ReportDetailModalProps {
@@ -26,6 +30,15 @@ export const ReportDetailModal: React.FC<ReportDetailModalProps> = ({
   onCorroborate,
 }) => {
   const [corroborated, setCorroborated] = React.useState(false);
+  const [correlations, setCorrelations] = React.useState<any>(null);
+
+  React.useEffect(() => {
+    if (report?.id) {
+      reportService.getReportCorrelations(report.id)
+        .then((res) => setCorrelations(res))
+        .catch(() => setCorrelations(null));
+    }
+  }, [report?.id]);
 
   if (!report) return null;
 
@@ -85,16 +98,42 @@ export const ReportDetailModal: React.FC<ReportDetailModalProps> = ({
             </div>
           </div>
 
-          {/* Image if available */}
-          {report.imageUrl && (
-            <div className="rounded-xl overflow-hidden border border-gray-200 max-h-64 bg-gray-900 flex items-center justify-center">
-              <img
-                src={report.imageUrl}
-                alt={report.title}
-                className="w-full h-full object-cover max-h-64 hover:scale-105 transition-transform duration-300"
-              />
-            </div>
-          )}
+          {/* EVIDENCE SECTION (Image or Video) */}
+          {(() => {
+            const evidenceObj = typeof report.evidence === 'object' ? report.evidence : null;
+            const evidenceUrl = evidenceObj?.url || (typeof report.evidence === 'string' ? report.evidence : report.imageUrl);
+            const isVideo = evidenceObj?.resourceType === 'video' || (evidenceUrl && (evidenceUrl.endsWith('.mp4') || evidenceUrl.endsWith('.webm')));
+
+            if (!evidenceUrl) return null;
+
+            return (
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between text-xs font-bold text-gray-500 uppercase tracking-wider font-['Outfit']">
+                  <span>SUPPORTING EVIDENCE</span>
+                  {isVideo ? (
+                    <span className="text-[10px] text-purple-600 bg-purple-50 px-2 py-0.5 rounded font-mono font-bold">VIDEO</span>
+                  ) : (
+                    <span className="text-[10px] text-blue-600 bg-blue-50 px-2 py-0.5 rounded font-mono font-bold">IMAGE</span>
+                  )}
+                </div>
+                <div className="rounded-xl overflow-hidden border border-gray-200 bg-gray-950 flex items-center justify-center max-h-72">
+                  {isVideo ? (
+                    <video
+                      src={evidenceUrl}
+                      controls
+                      className="w-full max-h-72 object-contain"
+                    />
+                  ) : (
+                    <img
+                      src={evidenceUrl}
+                      alt={report.title}
+                      className="w-full h-full object-cover max-h-72 hover:scale-102 transition-transform duration-300"
+                    />
+                  )}
+                </div>
+              </div>
+            );
+          })()}
 
           {/* Description */}
           <div>
@@ -106,37 +145,102 @@ export const ReportDetailModal: React.FC<ReportDetailModalProps> = ({
             </p>
           </div>
 
-          {/* AI Trust Engine Analysis Breakdown */}
-          <div className="p-4 rounded-xl bg-gradient-to-r from-red-50/50 via-gray-50 to-blue-50/50 border border-gray-200">
-            <div className="flex items-center justify-between mb-3">
+          {/* REAL-WORLD INCIDENT CLUSTER & CORROBORATION TIMELINE */}
+          {correlations?.incident && (
+            <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-xs space-y-3">
+              <div className="flex items-center justify-between border-b border-gray-100 pb-2.5">
+                <div className="flex items-center gap-2">
+                  <Layers className="w-4 h-4 text-blue-600" />
+                  <span className="text-xs font-black uppercase tracking-wider text-gray-900 font-['Outfit']">
+                    INCIDENT CLUSTER #{correlations.incident._id?.slice(-6)}
+                  </span>
+                </div>
+                <span className="text-[11px] font-bold text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-100">
+                  {correlations.incident.independentReportersCount} Independent Citizen Reports
+                </span>
+              </div>
+
+              {correlations.incident.timeline?.length > 1 && (
+                <div>
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2 font-['Outfit'] flex items-center gap-1">
+                    <Clock className="w-3 h-3" />
+                    <span>Citizen Report Timeline</span>
+                  </div>
+                  <div className="space-y-2 relative pl-3 before:absolute before:left-1 before:top-2 before:bottom-2 before:w-0.5 before:bg-gray-200">
+                    {correlations.incident.timeline.map((entry: any, idx: number) => (
+                      <div key={idx} className="relative pl-3 text-xs">
+                        <span className="absolute -left-[14px] top-1.5 w-2 h-2 rounded-full bg-blue-600 ring-2 ring-white"></span>
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-gray-800">{entry.reporterName || 'Citizen'}</span>
+                          <span className="text-[10px] text-gray-400 font-mono">
+                            {new Date(entry.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                        </div>
+                        <p className="text-gray-600 text-[11px] line-clamp-1 mt-0.5">"{entry.title}"</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* CONFLICTING / CONTRADICTING REPORTS BANNER */}
+              {correlations.hasContradiction && correlations.contradictingReports?.length > 0 && (
+                <div className="p-3 rounded-lg bg-rose-50 border border-rose-200 text-xs space-y-1.5 animate-pulse">
+                  <div className="flex items-center gap-1.5 text-rose-800 font-bold uppercase tracking-wider text-[11px] font-['Outfit']">
+                    <AlertTriangle className="w-3.5 h-3.5 text-rose-600" />
+                    <span>CONFLICTING REPORTS DETECTED</span>
+                  </div>
+                  <p className="text-rose-700 text-[11px]">
+                    Citizen reports in this cluster contain conflicting claims regarding the status of this incident. The human reviewer desk has flagged this for inspection.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Daily Bugle Trust Engine Telemetry */}
+          <div className="p-4 rounded-xl bg-gradient-to-r from-red-50/50 via-gray-50 to-blue-50/50 border border-gray-200 space-y-3">
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-[#E31E24]" />
                 <span className="text-xs font-black uppercase tracking-wider text-gray-900 font-['Outfit']">
-                  Bugle AI Trust Score & Telemetry
+                  Daily Bugle Trust Signals
                 </span>
               </div>
               <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-white border border-gray-200 text-gray-800">
-                {Math.round((report.aiTrustScore || 0.78) * 100)}% Confidence
+                Trust Score: {report.aiTrustScore && report.aiTrustScore <= 1 ? Math.round(report.aiTrustScore * 100) : (report.aiTrustScore || 75)}/100
               </span>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
               <div className="p-2 bg-white rounded-lg border border-gray-100">
-                <span className="text-[10px] text-gray-400 block">Reporter Trust</span>
-                <span className="font-bold text-gray-800">94/100</span>
+                <span className="text-[10px] text-gray-400 block">Reporter Signal</span>
+                <span className="font-bold text-gray-800">Active</span>
               </div>
               <div className="p-2 bg-white rounded-lg border border-gray-100">
                 <span className="text-[10px] text-gray-400 block">Spatial Cluster</span>
                 <span className="font-bold text-gray-800">r ≤ 500m</span>
               </div>
               <div className="p-2 bg-white rounded-lg border border-gray-100">
-                <span className="text-[10px] text-gray-400 block">EXIF Integrity</span>
-                <span className="font-bold text-emerald-600">Verified</span>
+                <span className="text-[10px] text-gray-400 block">Corroboration</span>
+                <span className="font-bold text-blue-600">{report.corroboratingCount} Supporting</span>
               </div>
               <div className="p-2 bg-white rounded-lg border border-gray-100">
-                <span className="text-[10px] text-gray-400 block">Human Consensus</span>
-                <span className="font-bold text-blue-600">Pending Review</span>
+                <span className="text-[10px] text-gray-400 block">Human Review</span>
+                <span className={`font-bold ${
+                  report.status === 'VERIFIED' ? 'text-emerald-600' :
+                  report.status === 'REJECTED' ? 'text-rose-600' :
+                  report.status === 'NEEDS_INFO' ? 'text-blue-600' : 'text-amber-600'
+                }`}>
+                  {report.status === 'VERIFIED' ? 'Verified by Bugle' :
+                   report.status === 'REJECTED' ? 'Rejected' :
+                   report.status === 'NEEDS_INFO' ? 'Clarification Requested' : 'Pending Human Review'}
+                </span>
               </div>
+            </div>
+
+            <div className="text-[11px] text-gray-500 bg-white/70 p-2 rounded-lg border border-gray-100 italic">
+              Verification decisions are made exclusively by Daily Bugle human reviewers. AI and Trust Engine provide signal telemetry only.
             </div>
           </div>
         </div>

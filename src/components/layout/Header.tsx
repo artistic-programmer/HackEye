@@ -122,6 +122,23 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false }) => {
               )}
             </Link>
 
+            {(user?.role === 'REVIEWER' || user?.role === 'ADMIN') && (
+              <Link
+                to="/reviewer"
+                className={`relative px-4 py-2 text-xs lg:text-sm font-bold tracking-wide uppercase transition-colors flex items-center gap-1.5 ${
+                  isActive('/reviewer')
+                    ? 'text-[#E31E24]'
+                    : 'text-gray-700 hover:text-[#E31E24]'
+                }`}
+              >
+                <ShieldCheck className="w-4 h-4 text-[#E31E24]" />
+                <span>Reviewer Desk</span>
+                {isActive('/reviewer') && (
+                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-[#E31E24] rounded-full"></span>
+                )}
+              </Link>
+            )}
+
             <button
               onClick={() => handleNavClick('how-it-works')}
               className="relative px-4 py-2 text-xs lg:text-sm font-bold tracking-wide uppercase text-gray-600 hover:text-gray-950 transition-colors cursor-pointer"
@@ -212,6 +229,15 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false }) => {
                         <FileText className="w-4 h-4" />
                         View Live Reports
                       </Link>
+                      {(user.role === 'REVIEWER' || user.role === 'ADMIN') && (
+                        <Link
+                          to="/reviewer"
+                          className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-red-600 hover:bg-red-50"
+                        >
+                          <ShieldCheck className="w-4 h-4 text-[#E31E24]" />
+                          Reviewer Desk
+                        </Link>
+                      )}
                     </div>
 
                     <div className="border-t border-gray-100 pt-1">
@@ -269,6 +295,16 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false }) => {
           >
             Reports
           </Link>
+          {(user?.role === 'REVIEWER' || user?.role === 'ADMIN') && (
+            <Link
+              to="/reviewer"
+              className={`block px-3 py-2 rounded-md text-base font-semibold ${
+                isActive('/reviewer') ? 'text-[#E31E24] bg-red-50' : 'text-red-600 hover:bg-red-50'
+              }`}
+            >
+              Reviewer Desk
+            </Link>
+          )}
           <button
             onClick={() => handleNavClick('how-it-works')}
             className="block w-full text-left px-3 py-2 rounded-md text-base font-semibold text-gray-700 hover:bg-gray-50"

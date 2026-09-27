@@ -7,9 +7,21 @@ export type ReportCategory =
   | 'Other';
 
 export type ReportStatus = 
+  | 'UNDER_REVIEW'
   | 'VERIFIED' 
+  | 'REJECTED'
+  | 'NEEDS_INFO'
   | 'UNDER REVIEW' 
   | 'REPORTED';
+
+export interface EvidenceMeta {
+  url: string;
+  publicId?: string;
+  resourceType?: 'image' | 'video' | 'raw';
+  mimeType?: string;
+  originalName?: string;
+  size?: number;
+}
 
 export interface ReportItem {
   id: string;
@@ -26,6 +38,8 @@ export interface ReportItem {
   timestamp: number;
   corroboratingCount: number;
   imageUrl?: string;
+  videoUrl?: string;
+  evidence?: EvidenceMeta | string;
   reporterName?: string;
   isFeatured?: boolean;
   aiTrustScore?: number; // e.g. 0.85

@@ -20,16 +20,34 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
     return (
       <span className={`inline-flex items-center gap-1.5 font-bold uppercase tracking-wider rounded-full border border-emerald-200/80 bg-emerald-50 text-emerald-700 shadow-xs ${sizeClasses}`}>
         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-        Verified
+        Verified by Bugle
       </span>
     );
   }
 
-  if (status === 'UNDER REVIEW') {
+  if (status === 'UNDER_REVIEW' || status === 'UNDER REVIEW') {
     return (
-      <span className={`inline-flex items-center gap-1.5 font-bold uppercase tracking-wider rounded-full border border-purple-200/80 bg-purple-50 text-purple-700 shadow-xs ${sizeClasses}`}>
-        <span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
+      <span className={`inline-flex items-center gap-1.5 font-bold uppercase tracking-wider rounded-full border border-amber-200/80 bg-amber-50 text-amber-800 shadow-xs ${sizeClasses}`}>
+        <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
         Under Review
+      </span>
+    );
+  }
+
+  if (status === 'NEEDS_INFO') {
+    return (
+      <span className={`inline-flex items-center gap-1.5 font-bold uppercase tracking-wider rounded-full border border-blue-200/80 bg-blue-50 text-blue-700 shadow-xs ${sizeClasses}`}>
+        <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+        Needs Info
+      </span>
+    );
+  }
+
+  if (status === 'REJECTED') {
+    return (
+      <span className={`inline-flex items-center gap-1.5 font-bold uppercase tracking-wider rounded-full border border-rose-200/80 bg-rose-50 text-rose-700 shadow-xs ${sizeClasses}`}>
+        <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+        Rejected
       </span>
     );
   }

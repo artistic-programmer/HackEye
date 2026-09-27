@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { PageLayout } from '../components/layout/PageLayout';
 import { ReportCategory, ReportItem, ReportDraft } from '../types/report';
+import { reportService } from '../services/report.service';
 import { 
   getStoredDraft, 
   saveStoredDraft, 
@@ -26,7 +27,10 @@ import {
   X, 
   AlertCircle,
   CheckCircle2,
-  Map as MapIcon 
+  Map as MapIcon,
+  Video,
+  Image as ImageIcon,
+  Loader2
 } from 'lucide-react';
 
 const CATEGORIES: { label: ReportCategory; icon: React.FC<{ className?: string }> }[] = [
@@ -49,16 +53,22 @@ export const ReportSubmission: React.FC = () => {
   const [description, setDescription] = useState(savedDraft?.description || '');
   const [location, setLocation] = useState(savedDraft?.location || '');
   const [category, setCategory] = useState<ReportCategory>(savedDraft?.category || 'Safety');
+  
+  // Real File state for multipart upload
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [evidenceName, setEvidenceName] = useState<string | undefined>(savedDraft?.evidenceName);
   const [evidencePreview, setEvidencePreview] = useState<string | undefined>(savedDraft?.evidencePreview);
+  const [evidenceType, setEvidenceType] = useState<'image' | 'video' | null>(null);
+  const [evidenceSizeStr, setEvidenceSizeStr] = useState<string | null>(null);
   
   // Geolocation state
   const [isLocating, setIsLocating] = useState(false);
   const [geoNotice, setGeoNotice] = useState<string | null>(null);
 
-  // Form errors
-  const [errors, setErrors] = useState<{ description?: string; location?: string }>({});
+  // Form errors & submission states
+  const [errors, setErrors] = useState<{ description?: string; location?: string; evidence?: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionProgress, setSubmissionProgress] = useState<string>('');
 
   // Dev simulation control: URL query param (?mockResult=failure) or internal selector
   const forceResult = searchParams.get('mockResult');
@@ -114,18 +124,54 @@ export const ReportSubmission: React.FC = () => {
   // Evidence file handler
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setEvidenceName(file.name);
-      if (file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setEvidencePreview(reader.result as string);
-        };
-        reader.readAsDataURL(file);
-      } else {
-        setEvidencePreview(undefined);
-      }
+    if (!file) return;
+
+    const isVideo = file.type.startsWith('video/');
+    const isImage = file.type.startsWith('image/');
+
+    if (!isVideo && !isImage) {
+      setErrors((prev) => ({
+        ...prev,
+        evidence: 'Unsupported file format. Please upload an image (JPG, PNG, WEBP) or video (MP4, WEBM).',
+      }));
+      return;
     }
+
+    if (isVideo && file.size > 60 * 1024 * 1024) {
+      setErrors((prev) => ({ ...prev, evidence: 'Video file size must be less than 60MB.' }));
+      return;
+    }
+
+    if (isImage && file.size > 15 * 1024 * 1024) {
+      setErrors((prev) => ({ ...prev, evidence: 'Image file size must be less than 15MB.' }));
+      return;
+    }
+
+    setErrors((prev) => ({ ...prev, evidence: undefined }));
+    setSelectedFile(file);
+    setEvidenceName(file.name);
+    setEvidenceType(isVideo ? 'video' : 'image');
+
+    const formattedSize =
+      file.size > 1024 * 1024
+        ? `${(file.size / (1024 * 1024)).toFixed(1)} MB`
+        : `${Math.round(file.size / 1024)} KB`;
+    setEvidenceSizeStr(formattedSize);
+
+    const previewUrl = URL.createObjectURL(file);
+    setEvidencePreview(previewUrl);
+  };
+
+  const handleRemoveFile = () => {
+    if (evidencePreview && evidencePreview.startsWith('blob:')) {
+      URL.revokeObjectURL(evidencePreview);
+    }
+    setSelectedFile(null);
+    setEvidenceName(undefined);
+    setEvidencePreview(undefined);
+    setEvidenceType(null);
+    setEvidenceSizeStr(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   // Submit report handler
@@ -151,82 +197,59 @@ export const ReportSubmission: React.FC = () => {
     }
 
     setIsSubmitting(true);
-
-    const currentDraft: ReportDraft = {
-      description,
-      location,
-      category,
-      evidenceName,
-      evidencePreview,
-      timestamp: Date.now(),
-    };
+    setSubmissionProgress('Submitting incident details to editorial desk...');
 
     const submitToBackend = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/reports', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({
-            title: description.slice(0, 60) + (description.length > 60 ? '...' : ''),
-            description,
-            category,
-            location: {
-              address: location,
-              latitude: 20.35,
-              longitude: 85.82,
-            },
-            evidence: evidencePreview || '',
-          }),
+        // Step 1: Create report in backend
+        const createdReport = await reportService.createReport({
+          title: description.slice(0, 60) + (description.length > 60 ? '...' : ''),
+          description,
+          category,
+          location: {
+            address: location,
+            latitude: 20.35,
+            longitude: 85.82,
+          },
         });
-        const json = await res.json();
-        if (json.success && json.data) {
-          saveStoredReport({
-            id: json.data._id,
-            title: json.data.title,
-            description: json.data.description,
-            category: json.data.category,
-            status: 'UNDER REVIEW',
-            location: json.data.location?.address || location,
-            timeAgo: 'Just now',
-            timestamp: Date.now(),
-            corroboratingCount: 1,
-            imageUrl: evidencePreview || '/assets/extracted/card_signal.png',
-            reporterName: user?.name || 'Anshu',
-            aiTrustScore: 0.68,
-          });
+
+        // Step 2: Upload evidence if attached
+        if (selectedFile && createdReport?._id) {
+          setSubmissionProgress('Uploading and analyzing supporting evidence...');
+          try {
+            await reportService.uploadEvidence(createdReport._id, selectedFile);
+          } catch (uploadErr: any) {
+            console.warn('Evidence upload failed, but report was created:', uploadErr);
+          }
         }
-      } catch (err) {
-        // Fallback to local storage if network is offline
+
+        clearStoredDraft();
+        setIsSubmitting(false);
+        navigate('/reports');
+      } catch (err: any) {
+        console.error('Submission error:', err);
+        setIsSubmitting(false);
+        // Fallback to local offline storage if backend is unreachable
         saveStoredReport({
           id: `rep-${Date.now().toString(36)}`,
           title: description.slice(0, 60) + (description.length > 60 ? '...' : ''),
           description: description,
           category: category,
-          status: 'UNDER REVIEW',
+          status: 'UNDER_REVIEW',
           location: location,
           timeAgo: 'Just now',
           timestamp: Date.now(),
           corroboratingCount: 1,
           imageUrl: evidencePreview || '/assets/extracted/card_signal.png',
-          reporterName: user?.name || 'Anshu',
+          reporterName: user?.name || 'Citizen Reporter',
           aiTrustScore: 0.68,
         });
+        clearStoredDraft();
+        navigate('/reports');
       }
-      setIsSubmitting(false);
-      clearStoredDraft();
-      navigate('/reports');
     };
 
-    setTimeout(() => {
-      if (simulatedResult === 'failure') {
-        setIsSubmitting(false);
-        setLastFailedReport(currentDraft);
-        navigate('/report/failed');
-      } else {
-        submitToBackend();
-      }
-    }, 600);
+    submitToBackend();
   };
 
   return (
@@ -464,36 +487,71 @@ export const ReportSubmission: React.FC = () => {
               <input
                 ref={fileInputRef}
                 type="file"
-                accept="image/*,video/mp4"
+                accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime"
                 onChange={handleFileChange}
                 className="hidden"
               />
 
+              {errors.evidence && (
+                <div className="mb-3 p-3 rounded-xl bg-red-50 border border-red-200 text-xs text-red-600 flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{errors.evidence}</span>
+                </div>
+              )}
+
               {evidenceName ? (
-                <div className="p-4 rounded-xl border border-gray-200 bg-gray-50 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    {evidencePreview ? (
-                      <img src={evidencePreview} alt="Preview" className="w-12 h-12 rounded-lg object-cover border border-gray-200" />
-                    ) : (
-                      <div className="w-12 h-12 rounded-lg bg-gray-200 flex items-center justify-center text-gray-500">
-                        <FileText className="w-6 h-6" />
+                <div className="p-4 rounded-xl border border-gray-200 bg-gray-50/80 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      {evidenceType === 'video' ? (
+                        <span className="p-1.5 rounded-lg bg-purple-100 text-purple-700">
+                          <Video className="w-4 h-4" />
+                        </span>
+                      ) : (
+                        <span className="p-1.5 rounded-lg bg-blue-100 text-blue-700">
+                          <ImageIcon className="w-4 h-4" />
+                        </span>
+                      )}
+                      <div>
+                        <p className="text-xs font-bold text-gray-900 max-w-[240px] truncate">{evidenceName}</p>
+                        <span className="text-[11px] text-gray-500 font-mono">
+                          {evidenceSizeStr || 'Media attached'} • {evidenceType === 'video' ? 'Video File' : 'Image File'}
+                        </span>
                       </div>
-                    )}
-                    <div>
-                      <p className="text-xs font-bold text-gray-800 max-w-[200px] truncate">{evidenceName}</p>
-                      <span className="text-[11px] text-emerald-600 font-medium">Ready for AI analysis</span>
                     </div>
+                    <button
+                      type="button"
+                      onClick={handleRemoveFile}
+                      className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                      title="Remove attachment"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setEvidenceName(undefined);
-                      setEvidencePreview(undefined);
-                    }}
-                    className="p-1 text-gray-400 hover:text-gray-700"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
+
+                  {/* Preview container */}
+                  {evidencePreview && (
+                    <div className="rounded-lg overflow-hidden border border-gray-200 bg-gray-950 flex items-center justify-center">
+                      {evidenceType === 'video' ? (
+                        <video
+                          src={evidencePreview}
+                          controls
+                          className="w-full max-h-52 object-contain"
+                        />
+                      ) : (
+                        <img
+                          src={evidencePreview}
+                          alt="Evidence Preview"
+                          className="w-full max-h-52 object-contain"
+                        />
+                      )}
+                    </div>
+                  )}
+
+                  <div className="text-[11px] text-emerald-700 font-medium flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>Evidence attached — will boost Trust Engine verification priority (+10 pts).</span>
+                  </div>
                 </div>
               ) : (
                 <div
@@ -504,14 +562,24 @@ export const ReportSubmission: React.FC = () => {
                     <Upload className="w-5 h-5" />
                   </div>
                   <div className="text-xs font-black uppercase tracking-wider text-gray-800 font-['Outfit']">
-                    ADD PHOTOS / VIDEOS
+                    ATTACH PHOTO OR VIDEO
                   </div>
                   <div className="text-[11px] font-mono text-gray-400 mt-1">
-                    JPG • PNG • MP4
+                    JPG • PNG • WEBP • MP4 • WEBM (Max 60MB)
                   </div>
                 </div>
               )}
             </div>
+
+            {/* Submission Progress Indicator */}
+            {isSubmitting && (
+              <div className="p-4 rounded-xl bg-red-50/80 border border-red-200 flex items-center gap-3 animate-pulse">
+                <Loader2 className="w-5 h-5 text-[#E31E24] animate-spin shrink-0" />
+                <div className="text-xs font-bold text-gray-800">
+                  {submissionProgress || 'Processing submission with Daily Bugle Trust Engine...'}
+                </div>
+              </div>
+            )}
 
             {/* AI Disclaimer Callout Banner */}
             <div className="p-4 rounded-2xl bg-blue-50/70 border border-blue-100 flex items-start gap-3">

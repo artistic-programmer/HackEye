@@ -2,10 +2,12 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './routes/ProtectedRoute';
+import { ReviewerRoute } from './routes/ReviewerRoute';
 import { Home } from './pages/Home';
 import { Login } from './pages/Login';
 import { ReportSubmission } from './pages/ReportSubmission';
 import { RecentReports } from './pages/RecentReports';
+import { ReviewerDashboard } from './pages/ReviewerDashboard';
 import { ReportFailed } from './pages/ReportFailed';
 import { Offline } from './pages/Offline';
 import { NotFound } from './pages/NotFound';
@@ -71,6 +73,16 @@ export function App() {
 
           {/* Page 4: Recent Reports */}
           <Route path="/reports" element={<RecentReports />} />
+
+          {/* Page Reviewer: Reviewer Desk */}
+          <Route
+            path="/reviewer"
+            element={
+              <ReviewerRoute>
+                <ReviewerDashboard />
+              </ReviewerRoute>
+            }
+          />
 
           {/* Page 5: Report Not Sent */}
           <Route path="/report/failed" element={<ReportFailed />} />
