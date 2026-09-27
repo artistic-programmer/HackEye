@@ -25,12 +25,7 @@ export const Home: React.FC = () => {
   const [selectedReport, setSelectedReport] = useState<ReportItem | null>(null);
 
   const handleReportCTA = () => {
-    if (isAuthenticated) {
-      navigate('/report');
-    } else {
-      setIntendedDestination('/report');
-      navigate('/login', { state: { from: '/report' } });
-    }
+    navigate('/report');
   };
 
   // Mock live reports featured on home

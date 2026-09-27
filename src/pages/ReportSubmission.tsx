@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { PageLayout } from '../components/layout/PageLayout';
 import { ReportCategory, ReportItem, ReportDraft } from '../types/report';
@@ -67,6 +67,7 @@ export const ReportSubmission: React.FC = () => {
 
   // Form errors & submission states
   const [errors, setErrors] = useState<{ description?: string; location?: string; evidence?: string }>({});
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionProgress, setSubmissionProgress] = useState<string>('');
 
@@ -196,6 +197,7 @@ export const ReportSubmission: React.FC = () => {
       return;
     }
 
+    setSubmitError(null);
     setIsSubmitting(true);
     setSubmissionProgress('Submitting incident details to editorial desk...');
 
@@ -229,6 +231,24 @@ export const ReportSubmission: React.FC = () => {
       } catch (err: any) {
         console.error('Submission error:', err);
         setIsSubmitting(false);
+
+        // If the backend requires a logged-in user to create a report, preserve that backend security requirement
+        const isAuthRequired =
+          err?.status === 401 ||
+          err?.status === 403 ||
+          err?.message?.includes('401') ||
+          err?.message?.toLowerCase().includes('unauthorized') ||
+          err?.message?.toLowerCase().includes('authentication') ||
+          err?.message?.toLowerCase().includes('sign in') ||
+          err?.message?.toLowerCase().includes('log in');
+
+        if (isAuthRequired) {
+          setSubmitError(
+            err.message || 'Authentication is required by the server to publish reports. Please sign in to submit.'
+          );
+          return;
+        }
+
         // Fallback to local offline storage if backend is unreachable
         saveStoredReport({
           id: `rep-${Date.now().toString(36)}`,
@@ -360,6 +380,7 @@ export const ReportSubmission: React.FC = () => {
                   onChange={(e) => {
                     setDescription(e.target.value);
                     if (errors.description) setErrors({ ...errors, description: undefined });
+                    if (submitError) setSubmitError(null);
                   }}
                   placeholder="Describe the incident clearly..."
                   className={`w-full px-4 py-3 rounded-xl border text-sm text-gray-900 placeholder-gray-400 focus:outline-none transition-all resize-y ${
@@ -402,6 +423,7 @@ export const ReportSubmission: React.FC = () => {
                       onChange={(e) => {
                         setLocation(e.target.value);
                         if (errors.location) setErrors({ ...errors, location: undefined });
+                        if (submitError) setSubmitError(null);
                       }}
                       placeholder="Search or enter location"
                       className={`w-full pl-10 pr-4 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400 focus:outline-none transition-all ${
@@ -577,6 +599,26 @@ export const ReportSubmission: React.FC = () => {
                 <Loader2 className="w-5 h-5 text-[#E31E24] animate-spin shrink-0" />
                 <div className="text-xs font-bold text-gray-800">
                   {submissionProgress || 'Processing submission with Daily Bugle Trust Engine...'}
+                </div>
+              </div>
+            )}
+
+            {/* Server Authentication Required Notice */}
+            {submitError && (
+              <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                <div className="text-xs">
+                  <div className="font-bold text-sm text-gray-900">Authentication Required</div>
+                  <div className="mt-1 text-gray-700 leading-relaxed">{submitError}</div>
+                  <div className="mt-2.5">
+                    <Link
+                      to="/login"
+                      className="inline-flex items-center gap-1 font-bold text-[#E31E24] hover:text-[#c9181d] underline cursor-pointer"
+                    >
+                      <span>Go to Sign In page</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+                  </div>
                 </div>
               </div>
             )}

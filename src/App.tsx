@@ -61,15 +61,8 @@ export function App() {
           {/* Page 2: Login */}
           <Route path="/login" element={<Login />} />
 
-          {/* Page 3: Report Submission (Protected) */}
-          <Route
-            path="/report"
-            element={
-              <ProtectedRoute>
-                <ReportSubmission />
-              </ProtectedRoute>
-            }
-          />
+          {/* Page 3: Report Submission */}
+          <Route path="/report" element={<ReportSubmission />} />
 
           {/* Page 4: Recent Reports */}
           <Route path="/reports" element={<RecentReports />} />

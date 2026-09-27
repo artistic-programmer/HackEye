@@ -43,9 +43,11 @@ export const reportService = {
       body: JSON.stringify(dto),
     });
 
-    const json = await res.json();
+    const json = await res.json().catch(() => ({}));
     if (!res.ok || !json.success) {
-      throw new Error(json.message || 'Failed to submit report');
+      const error: any = new Error(json.message || `Failed to submit report (${res.status})`);
+      error.status = res.status;
+      throw error;
     }
     return json.data;
   },

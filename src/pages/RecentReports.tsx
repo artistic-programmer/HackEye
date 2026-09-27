@@ -85,12 +85,7 @@ export const RecentReports: React.FC = () => {
   }, []);
 
   const handleReportCTA = () => {
-    if (isAuthenticated) {
-      navigate('/report');
-    } else {
-      setIntendedDestination('/report');
-      navigate('/login', { state: { from: '/report' } });
-    }
+    navigate('/report');
   };
 
   // Filtered and sorted reports

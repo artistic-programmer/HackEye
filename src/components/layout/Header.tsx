@@ -66,11 +66,7 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false }) => {
   };
 
   const handleReportCTA = () => {
-    if (isAuthenticated) {
-      navigate('/report');
-    } else {
-      navigate('/login', { state: { from: '/report' } });
-    }
+    navigate('/report');
   };
 
   return (
