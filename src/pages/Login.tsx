@@ -167,8 +167,7 @@ export const Login: React.FC = () => {
             </div>
 
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold font-serif-title tracking-tight leading-[1.05] text-gray-950">
-              WELCOME<br />
-              <span className="text-[#E31E24]">BACK.</span>
+              WELCOME
             </h1>
 
             <p className="mt-5 text-sm sm:text-base text-gray-600 font-medium max-w-md leading-relaxed">
